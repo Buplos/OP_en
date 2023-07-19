@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>口语测评t</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        /* 背景渐变动画样式 */
+        body {
+            background: linear-gradient(45deg, #007bff, #ff0000);
+            background-size: 200% 200%;
+            animation: gradientAnimation 10s ease infinite;
+        }
+
+        @keyframes gradientAnimation {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        /* 容器样式 */
+        .container {
+            position: relative;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            height: 100vh;
+        }
+
+        /* 标题样式 */
+        h1, h2, p {
+            text-align: center;
+        }
+
+        /* 聊天框样式 */
+        .chatbox {
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        /* 用户消息样式 */
+        .user-message {
+            float: right;
+            background-color: #F2C7D1;
+            color: #ffffff;
+            padding: 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* AI 消息样式 */
+        .ai-message {
+            float: left;
+            background-color: #ffffff;
+            color: #333333;
+            padding: 10px;
+            border-radius: 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 输入框容器样式 */
+        .message-input-container {
+            display: flex;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        /* 输入框样式 */
+        .message-input {
+            flex-grow: 1;
+            height: 40px;
+            resize: none;
+            margin-bottom: 10px;
+            border-radius: 20px;
+            padding: 10px;
+            font-size: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 发送按钮样式 */
+        .send-button {
+            width: 60px;
+            height: 40px;
+            background-color: #F2C7D1;
+            color: #ffffff;
+            border: none;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 语音按钮样式 */
+        .voice-button {
+            width: 40px;
+            height: 40px;
+            background-color: #F2C7D1;
+            color: #ffffff;
+            border: none;
+            border-radius: 50%;
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        /* 媒体查询 - 在小屏幕上进行样式调整 */
+        @media screen and (max-width: 600px) {
+            .container {
+                max-width: 100%;
+                padding: 10px;
+            }
+
+            .message-input-container {
+                margin-top: 10px;
+            }
+
+            .message-input {
+                height: 30px;
+                font-size: 14px;
+            }
+
+            .send-button {
+                width: 50px;
+                height: 30px;
+                font-size: 14px;
+            }
+
+            .voice-button {
+                width: 30px;
+                height: 30px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>English Conversation Chatbot</h1>
+        <div class="chatbox" id="chatbox"></div>
+        <div class="message-input-container">
+            <input type="text" id="user_input" class="message-input" placeholder="Enter your message">
+            <button onclick="sendMessage()" class="send-button">Send</button>
+            <button onclick="recordAudio()" class="voice-button">🎙️</button>
+        </div>
+    </div>
+    <script>
+        let userMessage = '';
+        let chatbox = document.getElementById('chatbox');
+        let isRecording = false;
+        let mediaRecorder;
+        let chunks = [];
+
+        function sendMessage() {
+            userMessage = document.getElementById('user_input').value;
+            document.getElementById('user_input').value = '';
+
+            var userDiv = document.createElement('div');
+            userDiv.className = 'user-message';
+            userDiv.innerHTML = '<p>' + userMessage + '</p>';
+            chatbox.appendChild(userDiv);
+
+            fetch('/dialogue', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ user_input: userMessage })
+            })
+            .then(response => response.json())
+            .then(data => {
+                var aiMessage = data.ai_response;
+                var aiDiv = document.createElement('div');
+                aiDiv.className = 'ai-message';
+                aiDiv.innerHTML = '<p>' + aiMessage + '</p>';
+                chatbox.appendChild(aiDiv);
+
+                // Scroll to the bottom of the chatbox
+                chatbox.scrollTop = chatbox.scrollHeight;
+            });
+        }
+
+        function recordAudio() {
+            if (!isRecording) {
+                // 开始录音
+                navigator.mediaDevices.getUserMedia({ audio: true })
+                    .then(function (stream) {
+                        mediaRecorder = new MediaRecorder(stream);
+                        chunks = [];
+
+                        mediaRecorder.ondataavailable = function (e) {
+                            chunks.push(e.data);
+                        };
+
+                        mediaRecorder.onstop = function () {
+                            let blob = new Blob(chunks, { type: 'audio/mp3' });
+                            chunks = [];
+
+                            // 创建音频文件URL
+                            let audioURL = URL.createObjectURL(blob);
+
+                            // 创建音频播放器元素
+                            let audioPlayer = document.createElement('audio');
+                            audioPlayer.controls = true;
+                            audioPlayer.src = audioURL;
+
+                            // 将音频播放器元素添加到聊天框
+                            let userDiv = document.createElement('div');
+                            userDiv.className = 'user-message';
+                            userDiv.appendChild(audioPlayer);
+                            chatbox.appendChild(userDiv);
+
+                            // 滚动到聊天框底部
+                            chatbox.scrollTop = chatbox.scrollHeight;
+                        };
+
+                        mediaRecorder.start();
+                        isRecording = true;
+                    })
+                    .catch(function (error) {
+                        console.log('录音失败：', error);
+                    });
+            } else {
+                // 停止录音
+                mediaRecorder.stop();
+                isRecording = false;
+            }
+        }
+
+        document.getElementById('user_input').addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        });
+    </script>
+</body>
+</html>

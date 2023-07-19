@@ -1,0 +1,124 @@
+/* 设置全局样式 */
+* {
+    box-sizing: border-box;
+}
+
+/* 背景渐变动画样式 */
+body {
+    background: linear-gradient(135deg, #ff8a00, #ffa500); /* 使用亮色系的渐变色 */
+    background-size: 200% 200%; /* 背景渐变大小 */
+    animation: gradientAnimation 10s ease infinite; /* 背景渐变动画效果 */
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+/* 容器样式 */
+.container {
+    position: relative;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: rgba(255, 255, 255, 0.8); /* 容器背景色，带有透明度 */
+    border-radius: 20px; /* 容器圆角边框 */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 容器阴影效果 */
+}
+
+/* 标题样式 */
+h1 {
+    font-size: 24px;
+    color: #333333; /* 标题颜色 */
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2); /* 标题阴影效果 */
+}
+
+/* 聊天框样式 */
+.chatbox {
+    flex-grow: 1;
+    overflow-y: auto;
+    background-color: rgba(255, 255, 255, 0.9); /* 聊天框背景色，带有透明度 */
+    border-radius: 20px; /* 聊天框圆角边框 */
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 聊天框阴影效果 */
+}
+
+/* 用户消息样式 */
+.user-message {
+    align-self: flex-end;
+    background-color: #F2C7D1; /* 用户消息背景色 */
+    color: #ffffff; /* 用户消息文字颜色 */
+    padding: 10px;
+    border-radius: 20px; /* 用户消息圆角边框 */
+    margin-bottom: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 用户消息阴影效果 */
+}
+
+/* AI 消息样式 */
+.ai-message {
+    align-self: flex-start;
+    background-color: #ffffff; /* AI 消息背景色 */
+    color: #333333; /* AI 消息文字颜色 */
+    padding: 10px;
+    border-radius: 20px; /* AI 消息圆角边框 */
+    margin-bottom: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* AI 消息阴影效果 */
+}
+
+/* 输入框容器样式 */
+.message-input-container {
+    display: flex;
+    align-items: center;
+    margin-top: 20px;
+}
+
+/* 输入框样式 */
+.message-input {
+    flex-grow: 1;
+    height: 40px;
+    resize: none;
+    margin-bottom: 10px;
+    border-radius: 20px;
+    padding: 10px;
+    font-size: 16px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border: none;
+    background-color: rgba(255, 255, 255, 0.5); /* 输入框背景色，带有透明度 */
+}
+
+/* 发送按钮样式 */
+.send-button {
+    width: 80px;
+    height: 50px;
+    background-color: #F2C7D1; /* 发送按钮背景色 */
+    color: #ffffff; /* 发送按钮文字颜色 */
+    border: none;
+    border-radius: 20px; /* 发送按钮圆角边框 */
+    font-size: 16px;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2); /* 发送按钮阴影效果 */
+    transition: background-color 0.3s ease;
+}
+
+.send-button:hover {
+    background-color: #D58FAA; /* 发送按钮鼠标悬停时的背景色 */
+}
+
+.send-button:focus {
+    outline: none;
+}
